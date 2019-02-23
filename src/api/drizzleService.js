@@ -11,11 +11,11 @@ const toObservable = store =>
   )
 
 // Build observable from drizzle store
-const drizzleInstance = new Drizzle(options)
+export const drizzleInstance = new Drizzle(options)
 
 // For the time being, restrict duplicate events. This should go further
 // upstream
-const drizzleObserver$ = toObservable(drizzleInstance.store).pipe(distinctUntilChanged(isEqual))
+export const drizzleObserver$ = toObservable(drizzleInstance.store).pipe(distinctUntilChanged(isEqual))
 
 /* // Subscribe
  * let subscription = drizzleObserver$.subscribe({
@@ -46,5 +46,3 @@ const drizzleObserver$ = toObservable(drizzleInstance.store).pipe(distinctUntilC
  *     console.log('cache_key', cache_key)
  *   }
  * } */
-
-export default { drizzleObserver$, drizzleInstance }
