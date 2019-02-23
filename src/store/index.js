@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import SimpleStorage from './modules/simpleStorage'
-import { drizzleObserver$, drizzleInstance } from '@/api/drizzleService'
+import { drizzleObserver$, getCacheKey } from '@/api/drizzleService'
 
 Vue.use(Vuex)
 
@@ -20,12 +20,6 @@ let subscription = drizzleObserver$.subscribe({
   complete: () => console.log(`Complete!`)
 })
 
-/* // can unsubscribe
- * setTimeout(() => {
- *   console.log('unsubscribing')
- *   subscription.unsubscribe()
- * }, 15000) */
-
 console.log('subscription', subscription)
 // console.log('drizzleInstance.contracts', drizzleInstance.contracts)
 
@@ -34,7 +28,7 @@ const processState = state => {
   let cache_key
   if (!cache_key && state.drizzleStatus.initialized) {
     console.log('Drizzle is initialized!')
-    cache_key = drizzleInstance.contracts.SimpleStorage.methods.storedData.cacheCall()
+    cache_key = getCacheKey('SimpleStorage', 'storedData')
     console.log('cache_key', cache_key)
   }
 
