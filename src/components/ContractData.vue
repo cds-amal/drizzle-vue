@@ -36,6 +36,7 @@ export default {
     console.log(`Created:
 1. Should initiate cache_key call
     `)
+    console.log('getCacheKey', this.$getCacheKey)
   }
 }
 </script>
