@@ -1,12 +1,13 @@
 <template>
   <div>
     <h1>{{ contractName }}</h1>
-    <strong>Stored data:</strong> <span>{{ storedData }}</span>
+    <strong>Stored data:</strong> <span>{{ contractData }}</span>
     <button @click="onClick">Click me</button>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: {
     contractName: {
@@ -19,8 +20,9 @@ export default {
     }
   },
   computed: {
-    storedData() {
-      return this.$store.state.SimpleStorage.storedData
+    ...mapGetters(['getContractData']),
+    contractData() {
+      return this.getContractData(this.contractName, this.method)
     }
   },
   methods: {
