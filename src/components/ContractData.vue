@@ -30,6 +30,12 @@ export default {
       this.$store.dispatch('updateStoredData', 'whoa!')
       console.log(this.contractName)
     }
+  },
+  created() {
+    // 1: register cache_key and use it for getting contract data
+    console.log(`Created:
+1. Should initiate cache_key call
+    `)
   }
 }
 </script>

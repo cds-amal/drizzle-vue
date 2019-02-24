@@ -22,12 +22,13 @@ let subscription = drizzleObserver$.subscribe({
 
 console.log('subscription', subscription)
 
+let cache_key
 const processState = state => {
-  console.log(JSON.stringify(state, null, 2))
+  // console.log(JSON.stringify(state, null, 2))
+  console.log('drizzle update...')
 
   // TODO: This will have to be done for all contracts specified in
   // drizzleOptions
-  let cache_key
   const method = 'storedData'
   const contract = 'SimpleStorage'
 
