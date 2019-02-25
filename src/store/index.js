@@ -4,6 +4,9 @@ import drizzle from './modules/drizzle'
 import contracts from './modules/contracts'
 import drizzlePlugin from '@/DrizzlePlugin'
 
+import { map, distinctUntilChanged } from 'rxjs/operators'
+import { isEqual } from 'lodash'
+
 Vue.use(drizzlePlugin)
 Vue.use(Vuex)
 
@@ -46,8 +49,6 @@ const processState = state => {
   }
 }
 
-import { map, distinctUntilChanged } from 'rxjs/operators'
-import { isEqual } from 'lodash'
 const obs$ = Vue.drizzleObserver$.pipe(
   map(x => x.contracts),
   distinctUntilChanged(isEqual)

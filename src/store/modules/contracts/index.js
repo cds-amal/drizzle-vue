@@ -9,16 +9,7 @@ const contractState = {
 }
 
 const mutations = {
-  updateContracts: (state, payload) => {
-    console.log('set contracts', payload)
-    state.instances = {...payload}
-    // for (let contractName in payload) {
-      /* console.log(
-       *   `state[${contract}] = ${JSON.stringify(payload[contract], null, 2)}`
-       * ) */
-      // state.instances[contractName] = payload[contractName]
-    // }
-  },
+  updateContracts: (state, payload) => (state.instances = { ...payload }),
 
   setCacheKey: (state, { contractName, method, cacheKey }) => {
     if (!state.cacheKeys[contractName]) state.cacheKeys[contractName] = {}
@@ -39,12 +30,12 @@ const getters = {
       return 'Drizzle Not initialized'
     }
 
-    if (!state.instances[contract].initialized) {
-      return 'Contract not initialized'
-    }
-    if (!state.instances[contract].synced) {
-      return 'Contract not synced'
-    }
+    /* if (!state.instances[contract].initialized) {
+     *   return 'Contract not initialized'
+     * }
+     * if (!state.instances[contract].synced) {
+     *   return 'Contract not synced'
+     * } */
     const cacheKey = state.cacheKeys[contract]
       ? state.cacheKeys[contract][method]
       : null
@@ -65,8 +56,7 @@ const getters = {
 
     console.log('NO CONTRACT DATA CACHED YET')
     console.log(JSON.stringify(state))
-
-    return 'ER ME GUD'
+    return '...'
   }
 }
 
