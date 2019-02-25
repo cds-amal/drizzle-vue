@@ -1,32 +1,34 @@
-const state = {
-  contracts: {
-    SimpleStorage: {
-      storedData: ''
-    }
-  }
+const drizzleState = {
+  initialized: false,
+  // These contracts need cacheCall invoked on them
+  // when drizzle is initialized
+  //
+  registeredContracts: []
 }
 
 const mutations = {
-  setData(state, { contract, method, value }) {
-    state.contracts[contract][method] = value
-  }
+  initialize: state => (state.initialized = true),
+
+  registerContract: (state, contract) =>
+    state.registeredContracts.push(contract)
 }
 
 const actions = {
-  updateContractData({ commit }, payload) {
-    commit('setData', payload)
-  }
+  initialize: ({ commit }) => commit('initialize'),
+
+  registerContract: ({ commit }, contract) =>
+    commit('registerContract', contract)
 }
 
 const getters = {
-  getContractData: state => (contract, method) => {
-    return state.contracts[contract][method]
-  }
+  isDrizzleInitialized: state => state.initialized,
+  getRegisteredContracts: state => state.registeredContracts
 }
 
 export default {
-  state,
+  state: drizzleState,
   actions,
   mutations,
-  getters
+  getters,
+  namespaced: true
 }

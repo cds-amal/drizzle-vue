@@ -26,40 +26,48 @@ let subscription = Vue.drizzleObserver$.subscribe({
 
 console.log('subscription', subscription)
 
-
-
-// Todo: Consuming the observable to update state in the modules
-// will somehow need to give access to the global store in order to
-// dispatch actions
-//
-// Either use a closure or class to encapsulate the store so it can be
-// imported by other state/modules
-//
-let cache_key
+let initialized = false
 const processState = state => {
+  console.log('Redux State update', state)
+  if (!initialized && state.drizzleStatus.initialized) {
+    initialized = true
+    store.dispatch('drizzle/initialize')
+    const contracts = store.getters['drizzle/getRegisteredContracts']
+    // console.log('mst register', store.getters['drizzle/getRegisteredContracts'])
+    for (let { contractName, method } of contracts) {
+      const cacheKey = Vue.getCacheKey(contractName, method)
+      console.log(`cacheKey for ${contractName}[${method}] = ${cacheKey}`)
+      store.dispatch('contracts/setCacheKey', {
+        contractName,
+        method,
+        cacheKey
+      })
+    }
+  }
+}
+
+import { map, distinctUntilChanged } from 'rxjs/operators'
+import { isEqual } from 'lodash'
+const obs$ = Vue.drizzleObserver$.pipe(
+  map(x => x.contracts),
+  distinctUntilChanged(isEqual)
+)
+
+// Subscribe
+let contractSubscriber = obs$.subscribe({
+  next: state => processContractState(state),
+  error: err => console.log(`Oops... ${err}`),
+  complete: () => console.log(`Complete!`)
+})
+
+console.log('contractSubscriber', contractSubscriber)
+
+const processContractState = state => {
+  console.log('process Contracts')
   // console.log(JSON.stringify(state, null, 2))
-  console.log('drizzle update...')
-
-  // TODO: This will have to be done for all contracts specified in
-  // drizzleOptions
-  const method = 'storedData'
-  const contract = 'SimpleStorage'
-
-  if (!cache_key && state.drizzleStatus.initialized) {
-    console.log('Drizzle is initialized!')
-    cache_key = Vue.getCacheKey(contract, method)
-    console.log('cache_key', cache_key)
-  }
-
-  let loc = state.contracts[contract][method][cache_key]
-  if (cache_key && loc) {
-    console.log('The value is', loc.value)
-    store.dispatch('updateContractData', {
-      contract,
-      method,
-      value: loc.value
-    })
-  }
+  console.log('state', state)
+  console.log('DISPATCHING contracts/updateContracts')
+  store.dispatch('contracts/updateContracts', state)
 }
 
 export default store

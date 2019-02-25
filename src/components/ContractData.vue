@@ -19,24 +19,26 @@ export default {
       required: true
     }
   },
+
   computed: {
-    ...mapGetters(['getContractData']),
+    ...mapGetters('contracts', ['getContractData']),
     contractData() {
       return this.getContractData(this.contractName, this.method)
     }
   },
+
   methods: {
     onClick() {
       this.$store.dispatch('updateStoredData', 'whoa!')
       console.log(this.contractName)
     }
   },
+
   created() {
-    // 1: register cache_key and use it for getting contract data
-    console.log(`Created:
-1. Should initiate cache_key call
-    `)
     console.log('getCacheKey', this.$getCacheKey)
+    //this.$getCacheKey(this.contractName, this.method)
+    const { contractName, method } = this
+    this.$store.dispatch('drizzle/registerContract', { contractName, method })
   }
 }
 </script>
