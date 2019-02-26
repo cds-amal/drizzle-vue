@@ -2,6 +2,8 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
     <ContractData contractName="SimpleStorage" method="storedData" />
+    <hr />
+    <ContractData contractName="ComplexStorage" method="string1" toUtf8 />
   </div>
 </template>
 

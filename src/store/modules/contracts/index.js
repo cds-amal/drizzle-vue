@@ -56,7 +56,7 @@ const getters = {
 
     console.log('NO CONTRACT DATA CACHED YET')
     console.log(JSON.stringify(state))
-    return '...'
+    return 'UNITIALIZED'
   }
 }
 

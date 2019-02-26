@@ -1,5 +1,5 @@
 import SimpleStorage from './contracts/SimpleStorage.json'
-// import ComplexStorage from './contracts/ComplexStorage.json'
+import ComplexStorage from './contracts/ComplexStorage.json'
 // import TutorialToken from './contracts/TutorialToken.json'
 
 const options = {
@@ -10,8 +10,8 @@ const options = {
       url: 'ws://127.0.0.1:9545'
     }
   },
-  // contracts: [SimpleStorage, TutorialToken],
-  contracts: [SimpleStorage],
+  // contracts: [SimpleStorage,ComplexStorage TutorialToken],
+  contracts: [SimpleStorage, ComplexStorage],
   events: {
     SimpleStorage: ['StorageSet']
   },

@@ -2,7 +2,6 @@
   <div>
     <h1>{{ contractName }}</h1>
     <strong>Stored data:</strong> <span>{{ contractData }}</span>
-    <button @click="onClick">Click me</button>
   </div>
 </template>
 
@@ -17,26 +16,38 @@ export default {
     method: {
       type: String,
       required: true
+    },
+    toUtf8: {
+      type: Boolean,
+      default: false
+    },
+    toAscii: {
+      type: Boolean,
+      default: false
     }
   },
 
   computed: {
     ...mapGetters('contracts', ['getContractData']),
     contractData() {
-      return this.getContractData(this.contractName, this.method)
-    }
-  },
+      let value = this.getContractData(this.contractName, this.method)
 
-  methods: {
-    onClick() {
-      this.$store.dispatch('updateStoredData', 'whoa!')
-      console.log(this.contractName)
+      // Todo - should read state to determine if component can go live
+      if (value === 'UNITIALIZED') return ''
+
+      if (this.toUtf8) {
+        value = this.$drizzleInstance.web3.utils.hexToUtf8(value)
+      } else if (this.toAscii) {
+        value = this.$drizzleInstance.web3.utils.hexToAscii(value)
+      }
+      return value
     }
   },
 
   created() {
-    console.log('getCacheKey', this.$getCacheKey)
-    //this.$getCacheKey(this.contractName, this.method)
+    console.log('contractName', this.contractName)
+    console.log('method', this.method)
+    console.log('toUtf8', this.toUtf8)
     const { contractName, method } = this
     this.$store.dispatch('drizzle/registerContract', { contractName, method })
   }
