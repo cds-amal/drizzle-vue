@@ -17,17 +17,14 @@ const store = new Vuex.Store({
   }
 })
 
-// console.log('drizzleInstance', Vue.drizzleInstance)
-// console.log('drizzleObserver$', Vue.drizzleObserver$)
-
-// Subscribe
-let subscription = Vue.drizzleObserver$.subscribe({
+// Redux Subscription
+let reduxSubscription = Vue.drizzleObserver$.subscribe({
   next: state => processState(state),
   error: err => console.log(`Oops... ${err}`),
   complete: () => console.log(`Complete!`)
 })
 
-console.log('subscription', subscription)
+console.log('reduxSubscription', reduxSubscription)
 
 let initialized = false
 const processState = state => {
@@ -35,40 +32,47 @@ const processState = state => {
   if (!initialized && state.drizzleStatus.initialized) {
     initialized = true
     store.dispatch('drizzle/initialize')
-    const contracts = store.getters['drizzle/getRegisteredContracts']
-    // console.log('mst register', store.getters['drizzle/getRegisteredContracts'])
-    for (let { contractName, method } of contracts) {
-      const cacheKey = Vue.getCacheKey(contractName, method)
-      console.log(`cacheKey for ${contractName}[${method}] = ${cacheKey}`)
-      store.dispatch('contracts/setCacheKey', {
-        contractName,
-        method,
-        cacheKey
-      })
-    }
+    return
   }
+
+  // handle cacheKey registration
+  store.dispatch('/contracts/processRegistrationQueue', contracts)
+  /* const contracts = store.getters['drizzle/getRegisteredContracts']
+   * for (let { contractName, method } of contracts) {
+   *   const cacheKey = Vue.getCacheKey(contractName, method)
+   *   store.dispatch('contracts/setCacheKey', {
+   *     contractName,
+   *     method,
+   *     cacheKey
+   *   })
+   * } */
 }
 
-const obs$ = Vue.drizzleObserver$.pipe(
+const contractsObserver$ = Vue.drizzleObserver$.pipe(
   map(x => x.contracts),
   distinctUntilChanged(isEqual)
 )
 
 // Subscribe
-let contractSubscriber = obs$.subscribe({
+let contractSubscriber = contractsObserver$.subscribe({
   next: state => processContractState(state),
   error: err => console.log(`Oops... ${err}`),
   complete: () => console.log(`Complete!`)
 })
 
-console.log('contractSubscriber', contractSubscriber)
-
 const processContractState = state => {
-  console.log('process Contracts')
-  // console.log(JSON.stringify(state, null, 2))
-  console.log('state', state)
-  console.log('DISPATCHING contracts/updateContracts')
-  store.dispatch('contracts/updateContracts', state)
+  console.log('process Contracts:', state)
+  for (let contractName in state) {
+    /* console.log(
+     *   'DISPATCHING contracts/updateContract',
+     *   contractName,
+     *   state[contractName]
+     * ) */
+    store.dispatch('contracts/updateContract', {
+      contractName,
+      data: state[contractName]
+    })
+  }
 }
 
 export default store

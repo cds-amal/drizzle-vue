@@ -9,54 +9,61 @@ const contractState = {
 }
 
 const mutations = {
-  updateContracts: (state, payload) => (state.instances = { ...payload }),
+  updateContract: (state, { contractName, data }) => {
+    console.log('contracts/updateContract: contractName', contractName, data)
+    state.instances = { ...state.instances, [contractName]: data }
+  },
 
   setCacheKey: (state, { contractName, method, cacheKey }) => {
-    if (!state.cacheKeys[contractName]) state.cacheKeys[contractName] = {}
-    state.cacheKeys[contractName][method] = cacheKey
+    const pair = { [method]: cacheKey }
+    if (!state.cacheKeys[contractName]) {
+      state.cacheKeys = { ...state.cacheKeys, [contractName]: { ...pair } }
+    } else {
+      state.cacheKeys[contractName] = {
+        ...state.cacheKeys[contractName],
+        ...pair
+      }
+    }
   }
 }
 
 const actions = {
-  updateContracts: ({ commit }, payload) => commit('updateContracts', payload),
+  updateContract: ({ commit }, payload) => commit('updateContract', payload),
 
-  setCacheKey: ({ commit }, payload) => commit('setCacheKey', payload)
+  setCacheKey: ({ commit }, payload) => commit('setCacheKey', payload),
+
+/*   processRegistrationQueue: ({ commit, rootState }, contracts) => {
+ *     const contracts = store.getters['drizzle/getRegisteredContracts']
+ *     const contracts = rootState.drizzle.
+ *     for (let { contractName, method } of contracts) {
+ *       const cacheKey = Vue.getCacheKey(contractName, method)
+ *       commit('contracts/setCacheKey', {
+ *         contractName,
+ *         method,
+ *         cacheKey
+ *       })
+ *     }
+ *
+ *   } */
 }
 
 const getters = {
-  getContractData: (state, _, rootState) => (contract, method) => {
-    console.log('GETCONTRACTDATA: rootState', rootState)
-    if (!rootState.drizzle.initialized) {
-      return 'Drizzle Not initialized'
-    }
+  getContractData: state => (contract, method) => {
+    const instance = state.instances[contract]
+    if (instance === undefined) return 'loading'
+    if (!instance.initialized) return 'loading'
+    if (!instance.synced) return 'unsynced'
 
-    /* if (!state.instances[contract].initialized) {
-     *   return 'Contract not initialized'
-     * }
-     * if (!state.instances[contract].synced) {
-     *   return 'Contract not synced'
-     * } */
     const cacheKey = state.cacheKeys[contract]
       ? state.cacheKeys[contract][method]
       : null
 
-    console.log('state', state)
-    console.log(`${contract}[${method}] = ${state.instances[contract][method]}`)
-    console.log(
-      `${contract}[${method}][${cacheKey}] = ${
-        state.instances[contract][method][cacheKey]
-      }`
-    )
+    if (cacheKey === null) return 'UNCACHED'
 
-    if (cacheKey && state.instances[contract][method][cacheKey]) {
-      const contractData = state.instances[contract][method][cacheKey].value
-      console.log('ContractData', contractData)
-      return contractData
-    }
-
-    console.log('NO CONTRACT DATA CACHED YET')
-    console.log(JSON.stringify(state))
-    return 'UNITIALIZED'
+    // console.log(`${contract}[${method}] =`, state.instances[contract][method])
+    const contractData = state.instances[contract][method][cacheKey].value
+    // console.log(`${contract}[${method}] = <${contractData}>`)
+    return contractData
   }
 }
 

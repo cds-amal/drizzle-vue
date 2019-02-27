@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 const drizzleState = {
   initialized: false,
   // These contracts need cacheCall invoked on them
@@ -17,7 +19,20 @@ const actions = {
   initialize: ({ commit }) => commit('initialize'),
 
   registerContract: ({ commit }, contract) =>
-    commit('registerContract', contract)
+  commit('registerContract', contract),
+
+  processRegistrationQueue: ({ commit, state }, contracts) => {
+    const registeredContracts = state.registeredContracts
+    for (let { contractName, method } of contracts) {
+      const cacheKey = Vue.getCacheKey(contractName, method)
+      commit('contracts/setCacheKey', {
+        contractName,
+        method,
+        cacheKey
+      })
+    }
+
+  }
 }
 
 const getters = {

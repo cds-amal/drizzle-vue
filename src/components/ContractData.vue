@@ -33,25 +33,28 @@ export default {
       let value = this.getContractData(this.contractName, this.method)
 
       // Todo - should read state to determine if component can go live
-      if (value === 'UNITIALIZED') return ''
+      if (value === 'UNCACHED') return '???uncached???'
 
-      if (this.$drizzleInstance.web3.utils === undefined) return ''
-      console.log('driz instance utils:', this.$drizzleInstance.web3.utils)
+      if (this.$drizzleInstance.web3.utils === undefined) return '?????'
+      /*
       if (this.toUtf8) {
         value = this.$drizzleInstance.web3.utils.hexToUtf8(value)
       } else if (this.toAscii) {
         value = this.$drizzleInstance.web3.utils.hexToAscii(value)
       }
+      */
       return value
     }
   },
 
   created() {
-    console.log('contractName', this.contractName)
-    console.log('method', this.method)
-    console.log('toUtf8', this.toUtf8)
-    const { contractName, method } = this
-    this.$store.dispatch('drizzle/registerContract', { contractName, method })
+    const utf8 = this.toUtf8 ? 'toUtf8' : ''
+    console.log(
+      `Component: <ContractData contractName="${this.contractName}" method="${
+        this.method
+      }" ${utf8} />`
+    )
+    //this.$store.dispatch('drizzle/registerContract', { contractName, method })
   }
 }
 </script>
