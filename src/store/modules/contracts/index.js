@@ -56,7 +56,7 @@ const getters = {
     const cachedData = instance[method][cacheKey]
     if (cachedData === undefined) {
       console.log('cachedData is unavailable')
-      return 'UNCASHED'
+      return 'UNCACHED'
     }
 
     /* console.log(`${contract}[${method}] =`, instance[method])
