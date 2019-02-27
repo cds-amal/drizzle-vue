@@ -4,7 +4,7 @@ import drizzle from './modules/drizzle'
 import contracts from './modules/contracts'
 import drizzlePlugin from '@/DrizzlePlugin'
 
-import { map, distinctUntilChanged } from 'rxjs/operators'
+import { map, distinctUntilChanged, filter } from 'rxjs/operators'
 import { isEqual } from 'lodash'
 
 Vue.use(drizzlePlugin)
@@ -26,29 +26,29 @@ let reduxSubscription = Vue.drizzleObserver$.subscribe({
 
 console.log('reduxSubscription', reduxSubscription)
 
-let initialized = false
+let drizzleInitialized = false
 const processState = state => {
-  console.log('Redux State update', state)
-  if (!initialized && state.drizzleStatus.initialized) {
-    initialized = true
-    store.dispatch('drizzle/initialize')
-    return
+  /* console.log('Redux State update', state)
+   * console.log(
+   *   'drizzleInitialized',
+   *   drizzleInitialized,
+   *   'drizleStatus',
+   *   state.drizzleStatus.initialized
+   * ) */
+  if (!drizzleInitialized) {
+    if (state.drizzleStatus.initialized) {
+      drizzleInitialized = true
+      // console.log('toggled drizzleInitialized', drizzleInitialized)
+      store.dispatch('drizzle/initialize')
+      // handle cacheKey registration
+      // console.log('about to dispatch processRegistrationQueue')
+      store.dispatch('drizzle/processRegistrationQueue')
+    }
   }
-
-  // handle cacheKey registration
-  store.dispatch('/contracts/processRegistrationQueue', contracts)
-  /* const contracts = store.getters['drizzle/getRegisteredContracts']
-   * for (let { contractName, method } of contracts) {
-   *   const cacheKey = Vue.getCacheKey(contractName, method)
-   *   store.dispatch('contracts/setCacheKey', {
-   *     contractName,
-   *     method,
-   *     cacheKey
-   *   })
-   * } */
 }
 
 const contractsObserver$ = Vue.drizzleObserver$.pipe(
+  filter(x => x.drizzleStatus.initialized),
   map(x => x.contracts),
   distinctUntilChanged(isEqual)
 )
@@ -70,7 +70,7 @@ const processContractState = state => {
      * ) */
     store.dispatch('contracts/updateContract', {
       contractName,
-      data: state[contractName]
+      contract: state[contractName]
     })
   }
 }

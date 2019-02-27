@@ -3,19 +3,25 @@ import drizzlePlugin from '@/DrizzlePlugin'
 
 Vue.use(drizzlePlugin)
 
-const contractState = {
+const state = {
   cacheKeys: {},
   instances: {}
 }
 
 const mutations = {
-  updateContract: (state, { contractName, data }) => {
-    console.log('contracts/updateContract: contractName', contractName, data)
-    state.instances = { ...state.instances, [contractName]: data }
+  updateContract: (state, { contractName, contract }) => {
+    /* console.log(
+     *   'contracts/updateContract: contractName',
+     *   contractName,
+     *   contract
+     * )
+     * console.log(JSON.stringify(contract, null, 2)) */
+    state.instances = { ...state.instances, [contractName]: contract }
   },
 
   setCacheKey: (state, { contractName, method, cacheKey }) => {
     const pair = { [method]: cacheKey }
+    /* console.log('mutation.setCacheKey:', contractName, method, cacheKey) */
     if (!state.cacheKeys[contractName]) {
       state.cacheKeys = { ...state.cacheKeys, [contractName]: { ...pair } }
     } else {
@@ -24,27 +30,14 @@ const mutations = {
         ...pair
       }
     }
+    /* console.log('updatedState', state) */
   }
 }
 
 const actions = {
   updateContract: ({ commit }, payload) => commit('updateContract', payload),
 
-  setCacheKey: ({ commit }, payload) => commit('setCacheKey', payload),
-
-/*   processRegistrationQueue: ({ commit, rootState }, contracts) => {
- *     const contracts = store.getters['drizzle/getRegisteredContracts']
- *     const contracts = rootState.drizzle.
- *     for (let { contractName, method } of contracts) {
- *       const cacheKey = Vue.getCacheKey(contractName, method)
- *       commit('contracts/setCacheKey', {
- *         contractName,
- *         method,
- *         cacheKey
- *       })
- *     }
- *
- *   } */
+  setCacheKey: ({ commit }, payload) => commit('setCacheKey', payload)
 }
 
 const getters = {
@@ -60,15 +53,23 @@ const getters = {
 
     if (cacheKey === null) return 'UNCACHED'
 
-    // console.log(`${contract}[${method}] =`, state.instances[contract][method])
-    const contractData = state.instances[contract][method][cacheKey].value
-    // console.log(`${contract}[${method}] = <${contractData}>`)
-    return contractData
+    const cachedData = instance[method][cacheKey]
+    if (cachedData === undefined) {
+      console.log('cachedData is unavailable')
+      return 'UNCASHED'
+    }
+
+    /* console.log(`${contract}[${method}] =`, instance[method])
+     * console.log(
+     *   `${contract}[${method}][${cacheKey}] =`,
+     *   JSON.stringify(instance[method][cacheKey], null, 2)
+     * ) */
+    return instance[method][cacheKey].value
   }
 }
 
 export default {
-  state: contractState,
+  state,
   actions,
   mutations,
   getters,

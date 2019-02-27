@@ -5,33 +5,39 @@ const drizzleState = {
   // These contracts need cacheCall invoked on them
   // when drizzle is initialized
   //
-  registeredContracts: []
+  registrationQ: []
 }
 
 const mutations = {
   initialize: state => (state.initialized = true),
 
-  registerContract: (state, contract) =>
-    state.registeredContracts.push(contract)
+  registerContract: (state, contract) => state.registrationQ.push(contract),
+
+  clearRegistrationQueue: state => (state.registrationQ = [])
 }
 
 const actions = {
   initialize: ({ commit }) => commit('initialize'),
 
-  registerContract: ({ commit }, contract) =>
-  commit('registerContract', contract),
+  registerContract: ({ commit }, contract) => {
+    commit('registerContract', contract)
+  },
 
-  processRegistrationQueue: ({ commit, state }, contracts) => {
-    const registeredContracts = state.registeredContracts
-    for (let { contractName, method } of contracts) {
+  processRegistrationQueue: ({ commit, dispatch, state }) => {
+    const registrationQ = state.registrationQ
+    for (let { contractName, method } of registrationQ) {
       const cacheKey = Vue.getCacheKey(contractName, method)
-      commit('contracts/setCacheKey', {
-        contractName,
-        method,
-        cacheKey
-      })
+      dispatch(
+        'contracts/setCacheKey',
+        {
+          contractName,
+          method,
+          cacheKey
+        },
+        { root: true }
+      )
     }
-
+    commit('clearRegistrationQueue')
   }
 }
 

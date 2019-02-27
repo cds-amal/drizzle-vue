@@ -36,25 +36,23 @@ export default {
       if (value === 'UNCACHED') return '???uncached???'
 
       if (this.$drizzleInstance.web3.utils === undefined) return '?????'
-      /*
       if (this.toUtf8) {
         value = this.$drizzleInstance.web3.utils.hexToUtf8(value)
       } else if (this.toAscii) {
         value = this.$drizzleInstance.web3.utils.hexToAscii(value)
       }
-      */
       return value
     }
   },
 
   created() {
     const utf8 = this.toUtf8 ? 'toUtf8' : ''
+    const { contractName, method } = this
     console.log(
-      `Component: <ContractData contractName="${this.contractName}" method="${
-        this.method
-      }" ${utf8} />`
+      `Component: <ContractData contractName="${contractName}" method="${method}" ${utf8} />`
     )
-    //this.$store.dispatch('drizzle/registerContract', { contractName, method })
+
+    this.$store.dispatch('drizzle/registerContract', { contractName, method })
   }
 }
 </script>
