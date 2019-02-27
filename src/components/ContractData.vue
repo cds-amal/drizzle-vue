@@ -35,6 +35,8 @@ export default {
       // Todo - should read state to determine if component can go live
       if (value === 'UNITIALIZED') return ''
 
+      if (this.$drizzleInstance.web3.utils === undefined) return ''
+      console.log('driz instance utils:', this.$drizzleInstance.web3.utils)
       if (this.toUtf8) {
         value = this.$drizzleInstance.web3.utils.hexToUtf8(value)
       } else if (this.toAscii) {
