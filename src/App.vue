@@ -4,16 +4,20 @@
     <ContractData contractName="SimpleStorage" method="storedData" />
     <hr />
     <ContractData contractName="ComplexStorage" method="string1" toUtf8 />
+    <hr />
+    <ContractArrayData contractName="ComplexStorage" method="singleDD" />
   </div>
 </template>
 
 <script>
 import ContractData from './components/ContractData.vue'
+import ContractArrayData from './components/ContractArrayData.vue'
 
 export default {
   name: 'app',
   components: {
-    ContractData
+    ContractData,
+    ContractArrayData
   }
 }
 </script>

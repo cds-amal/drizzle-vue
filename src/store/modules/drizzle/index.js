@@ -12,7 +12,10 @@ const mutations = {
   initialize: state => (state.initialized = true),
 
   // Todo: potential Vuex? reactivity here
-  registerContract: (state, contract) => state.registrationQ.push(contract),
+  registerContract: (state, contract) => {
+    console.log('Registering:', contract)
+    state.registrationQ.push(contract)
+  },
 
   clearRegistrationQueue: state => (state.registrationQ = [])
 }
