@@ -29,18 +29,17 @@ export default {
 
   computed: {
     ...mapGetters('contracts', ['getContractData']),
+
     contractData() {
       let value = this.getContractData(this.contractName, this.method)
 
-      // Todo - should read state to determine if component can go live
-      if (value === 'UNCACHED') return '???uncached???'
+      if (value === 'loading' || this.$drizzleInstance.web3.utils === undefined)
+        return 'loading'
 
-      if (this.$drizzleInstance.web3.utils === undefined) return '?????'
-      if (this.toUtf8) {
-        value = this.$drizzleInstance.web3.utils.hexToUtf8(value)
-      } else if (this.toAscii) {
-        value = this.$drizzleInstance.web3.utils.hexToAscii(value)
-      }
+      const { hexToUtf8, hexToAscii } = this.$drizzleInstance.web3.utils
+
+      if (this.toUtf8) return hexToUtf8(value)
+      else if (this.toAscii) return hexToAscii(value)
       return value
     }
   },
