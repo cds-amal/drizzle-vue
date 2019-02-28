@@ -2,7 +2,6 @@ import { map, distinctUntilChanged, filter } from 'rxjs/operators'
 import { isEqual } from 'lodash'
 
 const subscribe = (obs$, handler) => {
-  console.log('create subscription!')
   obs$.subscribe({
     next: message => handler(message),
     error: err => console.log(`Oops... ${err}`),

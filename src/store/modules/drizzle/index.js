@@ -13,7 +13,6 @@ const mutations = {
 
   // Todo: potential Vuex? reactivity here
   registerContract: (state, contract) => {
-    console.log('Registering:', contract)
     state.registrationQ.push(contract)
   },
 

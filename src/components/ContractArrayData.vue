@@ -1,8 +1,10 @@
 <template>
   <div>
-    <strong>Stored data:</strong>
     <ul>
-      <li v-for="(val, index) in contractData" :key="index"><strong>{{ val.key }}</strong> {{val.value}}</li>
+      <li>{{ this.contractName }}: {{ this.method }}</li>
+      <li v-for="(val, index) in contractData" :key="index">
+        <strong>{{ val.key }}</strong> {{ val.value }}
+      </li>
     </ul>
   </div>
 </template>
