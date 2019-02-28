@@ -55,7 +55,7 @@ export default {
       `Component: <ContractArrayData contractName="${contractName}" method="${method}" ${utf8} />`
     )
 
-    this.$store.dispatch('drizzle/registerContract', { contractName, method })
+    this.$store.dispatch('drizzle/REGISTER_CONTRACT', { contractName, method })
   }
 }
 </script>

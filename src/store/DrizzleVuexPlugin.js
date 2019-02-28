@@ -22,7 +22,7 @@ const drizzleHandler = store => {
         // the store at component creation time, which occurs before
         // drizzle initialization.
         //
-        store.dispatch('drizzle/processRegistrationQueue')
+        store.dispatch('drizzle/PROCESS_REGISTRATION_Q')
       }
     }
   }
@@ -31,7 +31,7 @@ const drizzleHandler = store => {
 const contractsHandler = store => message => {
   console.log('process Contracts:', message)
   for (let contractName in message) {
-    store.dispatch('contracts/updateContract', {
+    store.dispatch('contracts/UPDATE_CONTRACT', {
       contractName,
       contract: message[contractName]
     })
