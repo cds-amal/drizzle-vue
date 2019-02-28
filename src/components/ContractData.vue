@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>{{ contractName }}</h1>
-    <strong>Stored data:</strong> <span>{{ contractData }}</span>
+    <strong>{{ method }}</strong>: <span>{{ contractData }}</span>
   </div>
 </template>
 
@@ -31,16 +30,13 @@ export default {
     ...mapGetters('contracts', ['getContractData']),
 
     contractData() {
-      let value = this.getContractData(this.contractName, this.method)
-
-      if (value === 'loading' || this.$drizzleInstance.web3.utils === undefined)
-        return 'loading'
-
-      const { hexToUtf8, hexToAscii } = this.$drizzleInstance.web3.utils
-
-      if (this.toUtf8) return hexToUtf8(value)
-      else if (this.toAscii) return hexToAscii(value)
-      return value
+      const arg = {
+        contract: this.contractName,
+        method: this.method,
+        toUtf8: this.toUtf8,
+        toAscii: this.toAscii
+      }
+      return this.getContractData(arg)
     }
   },
 
@@ -55,4 +51,5 @@ export default {
   }
 }
 </script>
-<style scoped></style>
+<style scoped>
+</style>

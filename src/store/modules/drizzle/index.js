@@ -29,6 +29,7 @@ const actions = {
 
   processRegistrationQueue: ({ commit, dispatch, state }) => {
     const registrationQ = state.registrationQ
+
     for (let { contractName, method } of registrationQ) {
       const cacheKey = Vue.getCacheKey(contractName, method)
       dispatch(

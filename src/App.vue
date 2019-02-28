@@ -1,10 +1,12 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
+    <h1>Simple Storage</h1>
     <ContractData contractName="SimpleStorage" method="storedData" />
-    <hr />
+    <h1>Complex Storage</h1>
     <ContractData contractName="ComplexStorage" method="string1" toUtf8 />
-    <hr />
+    <ContractData contractName="ComplexStorage" method="storeduint1" />
+    <h1>Complex Storage</h1>
     <ContractArrayData contractName="ComplexStorage" method="singleDD" />
   </div>
 </template>

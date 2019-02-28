@@ -17,6 +17,7 @@ const drizzleHandler = store => {
       if (message.drizzleStatus.initialized) {
         drizzleInitialized = true
         store.dispatch('drizzle/initialize')
+
         // handle cacheKey registration after drizzle is initialized
         // The contracts that need cacheKey resolved were queued to
         // the store at component creation time, which occurs before

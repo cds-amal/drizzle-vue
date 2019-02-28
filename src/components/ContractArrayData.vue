@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>{{ contractName }}</h1>
     <strong>Stored data:</strong>
     <ul>
       <li v-for="(val, index) in contractData" :key="index"><strong>{{ val.key }}</strong> {{val.value}}</li>
@@ -34,16 +33,13 @@ export default {
     ...mapGetters('contracts', ['getContractData']),
 
     contractData() {
-      let value = this.getContractData(this.contractName, this.method)
-
-      if (value === 'loading' || this.$drizzleInstance.web3.utils === undefined)
-        return 'loading'
-
-      const { hexToUtf8, hexToAscii } = this.$drizzleInstance.web3.utils
-
-      if (this.toUtf8) return hexToUtf8(value)
-      else if (this.toAscii) return hexToAscii(value)
-
+      const arg = {
+        contract: this.contractName,
+        method: this.method,
+        toUtf8: this.toUtf8,
+        toAscii: this.toAscii
+      }
+      const value = this.getContractData(arg)
       return typeof value === 'object'
         ? Object.entries(value).map(([k, v]) => ({ key: k, value: v }))
         : value
