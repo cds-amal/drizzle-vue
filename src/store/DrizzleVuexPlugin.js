@@ -1,5 +1,11 @@
+import { Observable } from 'rxjs'
 import { map, distinctUntilChanged, filter } from 'rxjs/operators'
 import { isEqual } from 'lodash'
+
+const observableFromReduxStore = reduxStore =>
+  Observable.create(subscriber =>
+    reduxStore.subscribe(() => subscriber.next(reduxStore.getState()))
+  )
 
 const subscribe = (obs$, handler) => {
   obs$.subscribe({
@@ -15,7 +21,7 @@ const drizzleHandler = store => {
     if (!drizzleInitialized) {
       if (message.drizzleStatus.initialized) {
         drizzleInitialized = true
-        store.dispatch('drizzle/initialize')
+        store.dispatch('drizzle/INITIALIZE')
 
         // handle cacheKey registration after drizzle is initialized
         // The contracts that need cacheKey resolved were queued to
@@ -38,7 +44,8 @@ const contractsHandler = store => message => {
   }
 }
 
-const createDrizzlePluginFromObserver = drizzleObserver$ => state => {
+const createDrizzlePluginFromObserver = drizzleInstance => state => {
+  const drizzleObserver$ = observableFromReduxStore(drizzleInstance.store)
   const contractsObserver$ = drizzleObserver$.pipe(
     filter(x => x.drizzleStatus.initialized),
     map(x => x.contracts),

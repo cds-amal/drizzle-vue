@@ -1,4 +1,6 @@
-export const initialize = state => (state.initialized = true)
+export const INITIALIZE = state => (state.initialized = true)
+
+export const STARTUP = (state, payload) => (state.drizzleInstance = payload)
 
 // Todo: potential Vuex? reactivity here
 export const REGISTER_CONTRACT = (state, contract) => {

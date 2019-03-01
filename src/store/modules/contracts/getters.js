@@ -1,11 +1,9 @@
-import Vue from 'vue'
-
 export const isStale = state => contract => !state.instances[contract].synced
 
-export const getContractData = state => options => {
+export const getContractData = (state, _, rootState) => options => {
   const { contract, method, toUtf8, toAscii } = options
 
-  const drizzleInstance = Vue.drizzleInstance
+  const drizzleInstance = rootState.drizzle.drizzleInstance
   const web3 = drizzleInstance.web3
 
   const instance = state.instances[contract]

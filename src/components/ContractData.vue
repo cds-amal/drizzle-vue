@@ -1,6 +1,7 @@
 <template>
   <div>
-    <strong>{{ method }}</strong>: <span>{{ contractData }}</span>
+    <strong>{{ method }}</strong
+    >: <span>{{ contractData }}</span>
   </div>
 </template>
 
@@ -51,5 +52,4 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>
