@@ -15,9 +15,16 @@ const subscribe = (obs$, handler) => {
   })
 }
 
+const Log = (heading, msg) => {
+  console.group(heading)
+  console.log(JSON.stringify(msg, null, 2))
+  console.groupEnd()
+}
+
 const drizzleHandler = store => {
   let drizzleInitialized = false
   return message => {
+    // Log('Redux', message)
     if (!drizzleInitialized) {
       if (message.drizzleStatus.initialized) {
         drizzleInitialized = true
@@ -35,7 +42,7 @@ const drizzleHandler = store => {
 }
 
 const contractsHandler = store => message => {
-  console.log('process Contracts:', message)
+  // Log('Contract', message)
   for (let contractName in message) {
     store.dispatch('contracts/UPDATE_CONTRACT', {
       contractName,
@@ -44,16 +51,33 @@ const contractsHandler = store => message => {
   }
 }
 
+const accountsHandler = store => message => {
+  Log('Accounts', message)
+  const account = message.accounts[0]
+  const balance = message.accountBalances[account]
+  const payload = { account: account, balance }
+  Log('Balances', payload)
+  store.dispatch('account/SET_ACCOUNT', payload)
+}
+
 const createDrizzlePluginFromObserver = drizzleInstance => state => {
   const drizzleObserver$ = observableFromReduxStore(drizzleInstance.store)
+
   const contractsObserver$ = drizzleObserver$.pipe(
     filter(x => x.drizzleStatus.initialized),
     map(x => x.contracts),
     distinctUntilChanged(isEqual)
   )
 
+  const accountsObserver$ = drizzleObserver$.pipe(
+    filter(x => x.drizzleStatus.initialized),
+    map(x => ({ accounts: x.accounts, accountBalances: x.accountBalances })),
+    distinctUntilChanged(isEqual)
+  )
+
   const drizzleSub = subscribe(drizzleObserver$, drizzleHandler(state))
   const contractSub = subscribe(contractsObserver$, contractsHandler(state))
+  const accountsSub = subscribe(accountsObserver$, accountsHandler(state))
 }
 
 export default createDrizzlePluginFromObserver
