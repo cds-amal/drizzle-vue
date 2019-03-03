@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import { map, distinctUntilChanged, filter } from 'rxjs/operators'
+import { tap, map, distinctUntilChanged, filter } from 'rxjs/operators'
 import { isEqual } from 'lodash'
 
 const observableFromReduxStore = reduxStore =>
@@ -16,7 +16,7 @@ const subscribe = (obs$, handler) => {
 }
 
 const Log = (heading, msg) => {
-  console.group(heading)
+  console.groupCollapsed(heading)
   console.log(JSON.stringify(msg, null, 2))
   console.groupEnd()
 }
@@ -24,7 +24,7 @@ const Log = (heading, msg) => {
 const drizzleHandler = store => {
   let drizzleInitialized = false
   return message => {
-    // Log('Redux', message)
+    Log('Redux', message)
     if (!drizzleInitialized) {
       if (message.drizzleStatus.initialized) {
         drizzleInitialized = true
@@ -56,12 +56,17 @@ const accountsHandler = store => message => {
   const account = message.accounts[0]
   const balance = message.accountBalances[account]
   const payload = { account: account, balance }
-  Log('Balances', payload)
+  Log('Balance payload', payload)
   store.dispatch('account/SET_ACCOUNT', payload)
 }
 
 const createDrizzlePluginFromObserver = drizzleInstance => state => {
-  const drizzleObserver$ = observableFromReduxStore(drizzleInstance.store)
+  // const drizzleObserver$ = observableFromReduxStore(drizzleInstance.store)
+  const drizzleObserver$ = observableFromReduxStore(drizzleInstance.store).pipe(
+    map(x => JSON.stringify(x)),
+    map(x => JSON.parse(x)),
+    distinctUntilChanged(isEqual)
+  )
 
   const contractsObserver$ = drizzleObserver$.pipe(
     filter(x => x.drizzleStatus.initialized),
