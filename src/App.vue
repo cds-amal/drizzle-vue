@@ -16,6 +16,12 @@
       :methodArgs="accounts"
     />
 
+    <ContractForm
+      contractName="TutorialToken"
+      method="transfer"
+      :labels="transferLabels"
+    />
+
     <h1>Simple Storage</h1>
     <div class="pair">
       <Contract contractName="SimpleStorage" method="storedData" />
@@ -54,6 +60,10 @@ export default {
       const accountObj = this.getAccount
       console.log('accountObj', accountObj)
       return [accountObj.account]
+    },
+
+    transferLabels() {
+      return ['To Address', 'Amount to Send']
     }
   }
 }

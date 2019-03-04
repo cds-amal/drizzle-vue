@@ -5,6 +5,7 @@
       v-model="ethData[i]"
       :key="i"
       :type="param.type"
+      :placeholder="param.name"
     />
     <button @click.prevent="onSubmit">Submit</button>
   </form>
@@ -38,7 +39,13 @@ export default {
       required: true
     },
     methodArgs: {
-      type: Array
+      type: Array,
+      default: () => []
+    },
+
+    labels: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -58,10 +65,10 @@ export default {
     },
 
     displayInputs() {
-      const di = this.drizzleInstance
-      return di.contracts[this.contractName].abi
-        .find(item => item.name === this.method)
-        .inputs.map(x => ({ ...x, type: translateType(x.type) }))
+      return this.abi.inputs.map((x, i) => ({
+        name: this.labels[i] ? this.labels[i] : x.name,
+        type: translateType(x.type)
+      }))
     },
 
     utils() {
@@ -77,19 +84,14 @@ export default {
 
   methods: {
     onSubmit() {
-      console.log('submitting', this.ethData)
-      console.log('abi', this.abi)
-      console.log('abi.inputs', this.abiInputs)
-      console.log('this.method', this.method)
       const convertedInputs = this.abiInputs.map((input, i) =>
         input.type === 'bytes32'
           ? (this.ethData[i] = this.utils.toHex(this.ethData[i]))
           : this.ethData[i]
       )
-      console.log('convertedInputs', convertedInputs)
-      console.log('methodArgs')
-      //const sendArgs = this.methodArgs ? [...convertedInputs, this.methodArgs] : convertedInputs
-      const sendArgs = [...convertedInputs]
+      const sendArgs = this.methodArgs.length
+        ? [...convertedInputs, this.methodArgs]
+        : convertedInputs
 
       this.drizzleInstance.contracts[this.contractName].methods[
         this.method
