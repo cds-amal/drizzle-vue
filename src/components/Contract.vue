@@ -42,6 +42,10 @@ export default {
     toAscii: {
       type: Boolean,
       default: false
+    },
+    methodArgs: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -78,12 +82,13 @@ export default {
 
   created() {
     const utf8 = this.toUtf8 ? 'toUtf8' : ''
-    const { contractName, method } = this
+    const { contractName, method, methodArgs } = this
+    const args = methodArgs.length === 0 ? "" : `methodArgs="[${methodArgs}]"`
     console.log(
-      `Component: <ContractData contractName="${contractName}" method="${method}" ${utf8} />`
+      `Component: <ContractData contractName="${contractName}" method="${method}" ${args} ${utf8} />`
     )
 
-    this.$store.dispatch('drizzle/REGISTER_CONTRACT', { contractName, method })
+    this.$store.dispatch('drizzle/REGISTER_CONTRACT', { contractName, method, methodArgs })
   }
 }
 </script>

@@ -1,17 +1,13 @@
 <template>
-  <div v-if="isDrizzleInitialized">
-    <h1>{{ ethData }}</h1>
-    <form>
-      <input
-        v-for="(param, i) in displayInputs"
-        v-model="ethData[i]"
-        :key="i"
-        :type="param.type"
-      />
-      <button @click.prevent="onSubmit">Submit</button>
-    </form>
-    <div>{{ displayInputs }}</div>
-  </div>
+  <form v-if="isDrizzleInitialized">
+    <input
+      v-for="(param, i) in displayInputs"
+      v-model="ethData[i]"
+      :key="i"
+      :type="param.type"
+    />
+    <button @click.prevent="onSubmit">Submit</button>
+  </form>
 </template>
 
 <script>
@@ -40,6 +36,9 @@ export default {
     method: {
       type: String,
       required: true
+    },
+    methodArgs: {
+      type: Array
     }
   },
 
@@ -88,9 +87,13 @@ export default {
           : this.ethData[i]
       )
       console.log('convertedInputs', convertedInputs)
+      console.log('methodArgs')
+      //const sendArgs = this.methodArgs ? [...convertedInputs, this.methodArgs] : convertedInputs
+      const sendArgs = [...convertedInputs]
+
       this.drizzleInstance.contracts[this.contractName].methods[
         this.method
-      ].cacheSend(...convertedInputs)
+      ].cacheSend(...sendArgs)
     }
   }
 }
