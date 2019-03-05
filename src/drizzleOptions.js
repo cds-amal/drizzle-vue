@@ -11,7 +11,6 @@ const options = {
     }
   },
   contracts: [SimpleStorage,ComplexStorage, TutorialToken],
-  //contracts: [SimpleStorage, ComplexStorage],
   events: {
     SimpleStorage: ['StorageSet']
   },
