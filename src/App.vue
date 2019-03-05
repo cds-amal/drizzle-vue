@@ -1,71 +1,39 @@
 <template>
   <div v-if="isDrizzleInitialized" id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
-    <h1>Accounts</h1>
+    <h2>Accounts</h2>
     <Accounts />
 
-    <h1>TutorialToken</h1>
+    <h2>Tutorial Token</h2>
+    <TutorialToken />
 
-    <Contract contractName="TutorialToken" method="totalSupply" />
+    <h2>Simple Storage</h2>
+    <SimpleStorage />
 
-    <Contract contractName="TutorialToken" method="symbol" />
-
-    <Contract
-      contractName="TutorialToken"
-      method="balanceOf"
-      :methodArgs="accounts"
-    />
-
-    <ContractForm
-      contractName="TutorialToken"
-      method="transfer"
-      :labels="transferLabels"
-    />
-
-    <h1>Simple Storage</h1>
-    <div class="pair">
-      <Contract contractName="SimpleStorage" method="storedData" />
-      <ContractForm contractName="SimpleStorage" method="set" />
-    </div>
-    <h1>Complex Storage</h1>
-    <p>string1 and string2 are converted from bytes to UTF-8</p>
-    <Contract contractName="ComplexStorage" method="string1" toUtf8 />
-    <Contract contractName="ComplexStorage" method="string2" toUtf8 />
-    <h1>Complex Storage object</h1>
-    <Contract contractName="ComplexStorage" method="singleDD" />
+    <h2>Complex Storage</h2>
+    <ComplexStorage />
   </div>
 
   <div v-else>Loading...</div>
 </template>
 
 <script>
-import Contract from './components/Contract'
-import ContractForm from './components/ContractForm'
 import Accounts from './components/Accounts'
+import TutorialToken from './TutorialToken'
+import SimpleStorage from './SimpleStorage'
+import ComplexStorage from './ComplexStorage'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'app',
   components: {
     Accounts,
-    Contract,
-    ContractForm
+    ComplexStorage,
+    TutorialToken,
+    SimpleStorage
   },
 
-  computed: {
-    ...mapGetters('account', ['getAccount']),
-    ...mapGetters('drizzle', ['isDrizzleInitialized']),
-
-    accounts() {
-      const accountObj = this.getAccount
-      console.log('accountObj', accountObj)
-      return [accountObj.account]
-    },
-
-    transferLabels() {
-      return ['To Address', 'Amount to Send']
-    }
-  }
+  computed: mapGetters('drizzle', ['isDrizzleInitialized'])
 }
 </script>
 

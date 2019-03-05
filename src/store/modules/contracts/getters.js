@@ -1,4 +1,4 @@
-export const isStale = state => contract => !state.instances[contract].synced
+export const contractInstances = state => state.instances
 
 export const getContractData = (state, _, rootState) => options => {
   const { contract, method, toUtf8, toAscii } = options

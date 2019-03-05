@@ -56,7 +56,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters('contracts', ['getContractData']),
+    ...mapGetters('contracts', ['getContractData', 'contractInstances']),
+
+    isStale() {
+      return !this.contractInstances[this.contractName].synced
+    },
 
     contractData() {
       const arg = {
@@ -83,13 +87,23 @@ export default {
   created() {
     const utf8 = this.toUtf8 ? 'toUtf8' : ''
     const { contractName, method, methodArgs } = this
-    const args = methodArgs.length === 0 ? "" : `methodArgs="[${methodArgs}]"`
+    const args = methodArgs.length === 0 ? '' : `methodArgs="[${methodArgs}]"`
     console.log(
       `Component: <ContractData contractName="${contractName}" method="${method}" ${args} ${utf8} />`
     )
 
-    this.$store.dispatch('drizzle/REGISTER_CONTRACT', { contractName, method, methodArgs })
+    this.$store.dispatch('drizzle/REGISTER_CONTRACT', {
+      contractName,
+      method,
+      methodArgs
+    })
   }
 }
 </script>
-<style scoped></style>
+<style scoped>
+.stale {
+  /* Release the inner Jackson Pollock */
+  border: 1px solid red;
+  background-color: yellow;
+}
+</style>

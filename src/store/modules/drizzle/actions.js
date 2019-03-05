@@ -6,7 +6,6 @@ export const INITIALIZE = ({ commit }) => commit('INITIALIZE')
 
 // A component is registering it's contract and method
 export const REGISTER_CONTRACT = ({ commit, dispatch, rootState }, payload) => {
-  console.log('REGISTER_CONTRACT', payload)
   commit('REGISTER_CONTRACT', payload)
 
   if (rootState.drizzle.initialized) {
@@ -28,9 +27,6 @@ export const PROCESS_REGISTRATION_Q = ({
 }) => {
   const registrationQ = state.registrationQ
   const { drizzleInstance } = rootState.drizzle
-
-  console.log('PROCESS_REGISTRATION_Q')
-  console.log('Q', registrationQ)
 
   for (let { contractName, method, methodArgs } of registrationQ) {
     dispatch(
